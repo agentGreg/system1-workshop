@@ -56,6 +56,9 @@ print({f: sum(i['family'] == f for i in ITEMS.values()) for f in INBOX})
 code(r'''
 MODEL_ID = "Remek/basal-2.0-mini"
 if LIVE:
+    from importlib.metadata import version
+    if int(version("transformers").split(".")[0]) < 5:   # basal's tokenizer files need transformers 5
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "transformers>=5.17"], check=True)
     import torch
     from transformers import AutoTokenizer, AutoModelForCausalLM
     DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
